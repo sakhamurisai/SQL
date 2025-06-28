@@ -75,40 +75,93 @@ ON CONFLICT (email) DO UPDATE SET email = excluded.first_name || '@gmail.com' , 
 
 SHOW SERVER_ENCODING;
 
+SELECT *
+FROM employees_practice
+WHERE department = 'Sales';
+
+UPDATE employees_practice
+SET salary = 15000
+WHERE id = 3;
+
+UPDATE employees_practice
+SET department = 'Marketing'
+WHERE department IS NULL;
+
+UPDATE employees_practice
+SET email = 'required emial'
+WHERE id = NUMBER;
 
 
-/*UPDATE Statement Questions
+UPDATE employees_practice
+SET salary = salary + (salary *0.10)
+WHERE department = 'Sales';
 
-Simple:
+UPDATE employees_practice
+SET salary = '' AND department = ""
+WHERE id = 
 
-How would you change the salary of a single employee identified by their email address?
-Describe how to update the department for all employees whose current department is 'Marketing'.
-Explain how to update the email address for a specific employee identified by their id.
-Intermediate:
+UPDATE employee_practice
+SET department = ''
+WHERE department.id = new_department.id;
 
-How would you increase the salary of all employees in the 'Sales' department by 10%?
-Describe how to change both the department and the salary for a specific employee in a single UPDATE statement.
-How would you update the department for an employee based on information found in a different related table (e.g., using a join or subquery)?
-Advanced:
+UPDATE employees_practice
+SET department = (SELECT department_name FROM department WHERE id = 6)
+WHERE department_id = ;
 
-How can you update the salary of employees differently based on their current salary level (e.g., a higher percentage raise for lower salaries)?
-Describe how to update a column (department) based on the result of an aggregate function (like AVG or COUNT) calculated from the same table, potentially grouped in some way.
-Explain how to update a record using values returned from a subquery that retrieves information from another table, ensuring the update applies to the correct record based on a join condition.
-DELETE Statement Questions
+UPDATE employees_practice
+SET salary = salary + salary * 0.5
+WHERE id IN (SELECT id FROM (SELECT id,AVG(salary)) GROUP BY id HAVING salary < AVG(salary) AS sub )
 
-Simple:
+UPDATE employees_practice
+SET salary = salary + (
+	CASE 
+		WHEN salary < (SELECT average_salary FROM (SELECT id,AVG(salary) AS average_salary FROM employees_practice GROUP BY id HAVING salary < AVG(salary)) AS sub )
+		THEN salary * 0.5
+		WHEN salary = (SELECT average_salary FROM (SELECT id,AVG(salary) AS average_salary FROM employees_practice GROUP BY id HAVING salary < AVG(salary)) AS sub )
+		THEN salary * 0.25
+		ELSE
+			salary * 0.1
+	END
+);
 
-How would you remove a single employee record identified by their email address?
-Describe how to delete all employee records where the department is 'Finance'.
-Explain how to delete an employee record based on their unique id.
-Intermediate:
 
-How would you delete all employees who were hired before a specific date?
-Describe how to delete employees whose salary is below a certain threshold and are in a specific department.
-How would you delete employee records based on whether a corresponding record exists or does not exist in another related table?
-Advanced:
+DELETE FROM employees_practice
+WHERE email = 
 
-Explain how to remove all rows from the employees table efficiently while keeping the table structure and resetting any sequence generators associated with columns like id.
-Describe how to delete employees based on a condition that involves comparing their salary to the average salary of their own department (requiring a subquery or self-join).
-How would you delete employee records while simultaneously returning the details of the rows that were just deleted?
-*/
+DELETE FROM employees_practice
+WHERE department = 'Finance'
+
+DELETE FROM employees_practice
+WHERE id =
+
+DELETE FROM empoyees_practice
+WHERE hire_date < specific_date
+
+DELETE FROM employees_practice
+WHERE salary < threshold AND department = 
+
+DELETE FROM employees_practice AS a
+WHERE a.department NOT IN (SELECT (SUBSTRING(department.name,1,(LENGTH (department.name) - 11))) FROM department)
+
+SELECT *
+FROm department;
+
+SELECT *
+FROM employees_practice;
+
+WITH DepartmentAvgSalaries AS (
+    SELECT
+        department,
+        AVG(salary) AS avg_salary
+    FROM
+        employees_practice
+    GROUP BY
+        department
+)
+DELETE FROM employees_practice AS e
+USING DepartmentAvgSalaries AS das
+WHERE e.department = das.department
+  AND e.salary > das.avg_salary;
+
+  DELETE FROM employees_practice
+  RETURNING *;
